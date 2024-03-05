@@ -19,7 +19,7 @@ def date_convert(df): # froming date and unix timestamp columns
         df.loc[i,['timestamp']] = time_ms*1000 #converting to miliseconds
 
 for filename in os.listdir(PATH):
-    if filename.endswith('csv'):
+    if filename.endswith('db_circles.csv'):
         print(filename)
         files.append(filename)
 print(files)
@@ -60,7 +60,8 @@ def df_to_geojson(df, properties, lat='la', lon='lo'):
     
     return geojson
 
-cols = ['sheet_name','title','description','link', 'date','timestamp']
+# cols = ['sheet_name','title','description','link', 'date','timestamp']
+cols = ['weapon', 'target', 'title','description','link', 'date','timestamp']
 
 geojson = df_to_geojson(df, cols)
 
