@@ -157,6 +157,7 @@
                 // console.log(d)
                 return d;
             });
+            console.log('Data:',data)
             map.addSource('shelling', {
                 'type': 'geojson',
                 data: data
@@ -164,6 +165,7 @@
 
             // create a separate layer for each sheet_mame
             Object.keys(icons).forEach(weapon => {
+                console.log(weapon)
                 map.addLayer({
                     'id': `targets-Mykolaiv-${weapon}`,
                     'type': 'circle',

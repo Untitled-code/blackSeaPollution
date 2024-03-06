@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='utf-8' />
+    <title>Екоцид</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.css' rel='stylesheet' />
+    <script src="https://underscorejs.org/underscore-min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 20px;
+            line-height: 30px;
+        }
+
+        h2 {
+            font-size: 14px;
+            line-height: 20px;
+            margin-bottom: 10px;
+        }
+
+        a {
+            text-decoration: none;
+            color: #2dc4b2;
+        }
+
+        #console {
+            position: absolute;
+            width: 240px;
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+<div id='map'></div>
+<div id='console'>
+    <h1>Екоцид</h1>
+</div>
+<script>
+    // The value for 'accessToken' begins with 'pk...'
+    mapboxgl.accessToken = 'pk.eyJ1Ijoib2tvcnNhY2giLCJhIjoiY2xjbmc1bm1xMGNjNDN3bXJmNTZ3OGFjdyJ9.MF70WZV3iMroc85YF-xtOw';
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/light-v11',
+        center: [33.4818479644837, 45.9625154],
+        zoom: 7
+    });
+
+    map.addControl(new mapboxgl.FullscreenControl());
+
+
+    //each layer/sheetname has its own color
+    const icons = {
+        'ships': '#b91f06',
+        'shelling': '#da5848',
+        'industry': '#750202',
+    };
+
+
+    map.on('load', () => {
+        //console.log(Object.keys(icons)[0])
+        map.addLayer({
+            id: Object.keys(icons)[0], //return name of first key from const icons
+            type: 'circle',
+            source: {
+                type: 'geojson',
+                data: './db.geojson'
+            },
+            'filter': ['==', 'target', 1],
+            paint: {
+                'circle-color': [
+                    'interpolate',
+                    ['linear'],
+                    ['get', 'target'],
+                    1,
+                    Object.values(icons)[0], //return name of first value
+
+                ],
+                // "circle-color": "#ad2d10",
+                "circle-radius": 12,
+                'circle-opacity': 0.4
+            },
+        });
+
+        map.addLayer({
+            id: Object.keys(icons)[1],
+            type: 'circle',
+            source: {
+                type: 'geojson',
+                data: './db.geojson'
+            },
+            'filter': ['==', 'target', 2],
+            paint: {
+                'circle-color': [
+                    'interpolate',
+                    ['linear'],
+                    ['get', 'target'],
+                    2,
+                    Object.values(icons)[1]
+
+                ],
+                // "circle-color": "#ad2d10",
+                "circle-radius": 10,
+                'circle-opacity': 0.4
+            },
+        });
+
+        map.addLayer({
+            id: Object.keys(icons)[2],
+            type: 'circle',
+            source: {
+                type: 'geojson',
+                data: './db.geojson'
+            },
+            'filter': ['==', 'target', 3],
+            paint: {
+                'circle-color': [
+                    'interpolate',
+                    ['linear'],
+                    ['get', 'target'],
+                    3,
+                    Object.values(icons)[2]
+
+                ],
+                // "circle-color": "#ad2d10",
+                "circle-radius": 18,
+                'circle-opacity': 0.4
+            },
+        });
+
+    });
+
+    // Code from the next step will go here.
+    /*
+Add an event listener that runs
+  when a user clicks on the map element.
+*/
+    Object.keys(icons).forEach(layer => { //passing key from array
+        console.log('layer:', layer)
+        map.on('click', (event) => {
+            // If the user clicked on one of your markers, get its information.
+            const features = map.queryRenderedFeatures(event.point, {
+                layers: [layer] // replace with your layer name
+            });
+            if (!features.length) {
+                return;
+            }
+            const feature = features[0];
+            // Code from the next step will go here.
+            /*
+        Create a popup, specify its options
+        and properties, and add it to the map.
+      */
+            const popup = new mapboxgl.Popup({offset: [0, -15]})
+                .setLngLat(feature.geometry.coordinates)
+                .setHTML(
+                    `\<p>${feature.properties.description}</p>
+                               \<p>${feature.properties.date}</p>`
+                )
+                .addTo(map);
+        });
+    });
+</script>
+</body>
+</html>
