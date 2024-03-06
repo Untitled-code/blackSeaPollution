@@ -52,14 +52,13 @@
     <h1>Екоцид</h1>
 </div>
 <script>
-    var redColor= "rgb(170,50,60)";
     // The value for 'accessToken' begins with 'pk...'
     mapboxgl.accessToken = 'pk.eyJ1Ijoib2tvcnNhY2giLCJhIjoiY2xjbmc1bm1xMGNjNDN3bXJmNTZ3OGFjdyJ9.MF70WZV3iMroc85YF-xtOw';
     const map = new mapboxgl.Map({
         container: 'map',
         style: 'data/positron2.json',
         // style: 'mapbox://styles/mapbox/light-v11',
-        center: [33.4818479644837, 45.9625154],
+        center: [31.4818479644837, 45.4625154],
         zoom: 7
     });
 
@@ -71,11 +70,11 @@
         'ships': '#e0a9a9',
         'shelling': '#da5848',
         'industry': '#750202',
+        'ships-civil': '#9bcca9'
     };
 
 
     map.on('load', function () {
-        //console.log(Object.keys(icons)[0])
         map.addSource("ecocide", {
             "type": "geojson",
             'data': './db.geojson'
@@ -136,6 +135,25 @@
                 ],
                 "circle-radius": 18,
                 'circle-opacity': 0.8
+            },
+        });
+
+        map.addLayer({
+            id: Object.keys(icons)[3], //return name of first key from const icons
+            type: 'circle',
+            "source": "ecocide",
+            'filter': ['==', 'target', 4],
+            paint: {
+                'circle-color': [
+                    'interpolate',
+                    ['linear'],
+                    ['get', 'target'],
+                    1,
+                    Object.values(icons)[3], //return name of first value
+
+                ],
+                "circle-radius": 12,
+                // 'circle-opacity': 0.8
             },
         });
 
